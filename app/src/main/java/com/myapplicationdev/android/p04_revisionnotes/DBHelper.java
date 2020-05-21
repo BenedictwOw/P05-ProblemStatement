@@ -29,14 +29,14 @@ public class DBHelper extends SQLiteOpenHelper {
         // CREATE TABLE Note
         // (id INTEGER PRIMARY KEY AUTOINCREMENT, note_content TEXT, rating
         // INTEGER );
-        String createNoteTableSql = "CREATE TABLE " + TABLE_SONG + "("
-                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + COLUMN_TITLE + " TEXT, "
-                + COLUMN_SINGERS + " TEXT, "
-                + COLUMN_YEAR + " TEXT, "
-                + COLUMN_STARS + " INTEGER )";
-        db.execSQL(createNoteTableSql);
-        Log.i("info", "created tables");
+            String createNoteTableSql = "CREATE TABLE " + TABLE_SONG + "("
+                    + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + COLUMN_TITLE + " TEXT, "
+                    + COLUMN_SINGERS + " TEXT, "
+                    + COLUMN_YEAR + " TEXT, "
+                    + COLUMN_STARS + " INTEGER )";
+            db.execSQL(createNoteTableSql);
+            Log.i("info", "created tables");
     }
 
     @Override
@@ -137,6 +137,39 @@ public class DBHelper extends SQLiteOpenHelper {
                 String year = cursor.getString(3);
                 String stars = cursor.getString(4);
                 Song song = new Song(id,title,singers,year,stars);
+                songs.add(song);
+            } while (cursor.moveToNext());
+        }
+        // Close connection
+        cursor.close();
+        db.close();
+        return songs;
+    }
+    public ArrayList<Song> getYear(String year) {
+        // Create an ArrayList that holds String objects
+        ArrayList<Song> songs = new ArrayList<Song>();
+        // Select all the tasks' description
+        String selectQuery = "SELECT *"
+                + " FROM " + TABLE_SONG +
+                " WHERE " + COLUMN_YEAR + "=" + year;
+
+        // Get the instance of database to read
+        SQLiteDatabase db = this.getReadableDatabase();
+        // Run the SQL query and get back the Cursor object
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // moveToFirst() moves to first row, null if no records
+        if (cursor.moveToFirst()) {
+            // Loop while moveToNext() points to next row
+            //  and returns true; moveToNext() returns false
+            //  when no more next row to move to
+            do {
+                int id = cursor.getInt(0);
+                String title = cursor.getString(1);
+                String singers = cursor.getString(2);
+                String year2 = cursor.getString(3);
+                String stars = cursor.getString(4);
+                Song song = new Song(id,title,singers,year2,stars);
                 songs.add(song);
             } while (cursor.moveToNext());
         }
